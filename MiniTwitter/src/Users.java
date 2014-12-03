@@ -21,10 +21,15 @@ public class Users extends DefaultMutableTreeNode implements UserComponent {
 	private UserGUI ui;
 	private String identifer = "user";
 	private boolean changed;
+	private long creationTime;
+	private long lastUpdatedTime;
+	private	long lastUpdated;
 
-	public Users(String name, int x) {
+
+	public Users(String name) {
 		this.name = name;
-		this.ID = name + x;
+		this.creationTime = System.currentTimeMillis();
+		this.ID = name + creationTime%1000;
 		followers = new ArrayList<Users>();
 		following = new ArrayList<Users>();
 		personalMessageRecord = new LinkedList<String>();
@@ -51,7 +56,10 @@ public class Users extends DefaultMutableTreeNode implements UserComponent {
 	public void post(String m) {
 		message = m;
 		personalMessageRecord.add(message);
+		lastUpdatedTime = System.currentTimeMillis();
+		ui.setLastUpdated(""+lastUpdatedTime);
 		changed = true;
+		lastUpdated = lastUpdatedTime;
 		notifyObservers();
 
 	}
@@ -62,15 +70,29 @@ public class Users extends DefaultMutableTreeNode implements UserComponent {
 			return;
 		temp = new ArrayList<Users>(followers);
 		this.changed = false;
-		for (Users s : temp)
-			s.updates(this.message);
-
+		for (Users s : temp){
+			s.setLastUpdatedTime(lastUpdatedTime);
+			s.updates(this.message, this.name);
+			
+		}
 	}
 
-	public void updates(String str) {
+	private void setLastUpdatedTime(long lastUpdatedTime) {
+		this.lastUpdatedTime = lastUpdatedTime;
+		
+	}
+	public long getLastUpdatedTime(){
+		return lastUpdatedTime;
+	}
+	public long getLastUpdated(){
+		return lastUpdated;
+	}
+
+	public void updates(String str, String s) {
 		String temp = str;
 		if (temp != null || temp != "") {
-			ui.setNF(name + ": " + temp);
+			ui.setNF( s + ": " + temp);
+			ui.setLastUpdated("" +lastUpdatedTime);
 
 		}
 
@@ -86,5 +108,20 @@ public class Users extends DefaultMutableTreeNode implements UserComponent {
 
 		return personalMessageRecord;
 	}
+
+	public long getCreationTime() {
+		return creationTime;
+	}
+	public boolean check(){
+	    if(ID != null){
+	        for(int i = 0; i < ID.length(); i++){
+	            if(Character.isWhitespace(ID.charAt(i))){
+	                return true;
+	            }
+	        }
+	    }
+	    return false;
+	}
+
 
 }

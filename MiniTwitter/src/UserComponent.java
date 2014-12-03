@@ -5,4 +5,7 @@ public interface UserComponent {
 	public String getName();
 	public String getIdentifier();
 	public String toString();
+	public String getID();
+	public long getCreationTime();
+	public boolean check();
 }

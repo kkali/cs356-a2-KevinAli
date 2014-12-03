@@ -11,9 +11,11 @@ public class Group extends DefaultMutableTreeNode implements UserComponent{
 	private String name;
 	private List<UserComponent> members = new LinkedList();
 	private String identifer = "group";
-	public Group(String name,int x){
+	private long idx;
+	public Group(String name){
 		this.name = name;
-		this.ID = name + x;
+		this.idx = System.currentTimeMillis();
+		this.ID = name + idx%1000;
 	}
 	public void add(UserComponent uc){
 		members.add(uc);
@@ -27,4 +29,22 @@ public class Group extends DefaultMutableTreeNode implements UserComponent{
 	public String toString(){
 		return name;
 	}
+	public long getCreationTime() {
+		// TODO Auto-generated method stub
+		return idx;
+	}
+	public boolean check(){
+	    if(ID != null){
+	        for(int i = 0; i < ID.length(); i++){
+	            if(Character.isWhitespace(ID.charAt(i))){
+	                return true;
+	            }
+	        }
+	    }
+	    return false;
+	}
+	public String getID() {
+		return ID;
+	}
+
 }

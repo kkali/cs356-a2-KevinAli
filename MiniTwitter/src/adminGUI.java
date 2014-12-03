@@ -44,6 +44,7 @@ public class adminGUI extends JFrame {
 	//Note using a HashMap would better 
 	private int userC = 0;//used to create pseudo unique ID
 	private int groupC = 0;//used to create psedo unique ID
+	private JButton userCheck;
 	
 
 	private adminGUI() {
@@ -181,16 +182,64 @@ public class adminGUI extends JFrame {
 		contentPane.add(percentage);
 
 		tree = new JTree();
-		Group root = new Group("Root", 0);
+		Group root = new Group("Root");
 		DefaultMutableTreeNode temp = new DefaultMutableTreeNode(root);
 		temp.setUserObject(root);
 		tree.setModel(new DefaultTreeModel(temp));
-		tree.setBounds(253, 13, 205, 220);
+		tree.setBounds(0, 13, 205, 220);
 		contentPane.add(tree);
 
 		scrollPane = new JScrollPane(tree);
 		scrollPane.setBounds(253, 11, 205, 220);
 		contentPane.add(scrollPane);
+		
+		JButton lastupdated = new JButton("Last Updated");
+		lastupdated.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				long temp =0;
+				Users tempUser = null;
+				for (Users s: allUser){
+					if (s.getLastUpdated()>temp){
+						tempUser = s;
+						temp =s.getLastUpdated();
+					}
+				}
+				if(tempUser!=null)
+					JOptionPane.showMessageDialog(new JFrame(),tempUser + " is the last User to send a tweet his user ID is: "+ tempUser.getID());
+			}
+		});
+		lastupdated.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lastupdated.setBounds(116, 137, 96, 29);
+		contentPane.add(lastupdated);
+		
+		userCheck = new JButton("User Check");
+		userCheck.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String str = "INVALID ID for Users \n";
+				String str1="";
+				for (Users s: allUser){
+					if (s.check()){
+						str1 += s.getName() +" wit the ID: "+s.getID() +"\n";
+					}			
+				}
+				if (str1.length()==0)
+					str1 = "none\n";
+				str += str1;
+				str += "INVALID ID for Groups \n";
+				str1 ="";
+				for (Group s: allGroup){
+					if (s.check()){
+						str1 += s.getName() +" wit the ID: "+s.getID() +"\n";
+					}			
+				}
+				if (str1.length()==0)
+					str1 = "none\n";
+				JOptionPane.showMessageDialog(new JFrame(),str);
+			}
+		});
+		userCheck.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		userCheck.setBounds(10, 137, 96, 26);
+		contentPane.add(userCheck);
 	}
 	//get userList
 	public List<Users> getUList() {
@@ -208,7 +257,7 @@ public class adminGUI extends JFrame {
 		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
 		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree
 				.getLastSelectedPathComponent();
-		UserComponent uc = new Group(group.getText(), groupC);
+		UserComponent uc = new Group(group.getText());
 		DefaultMutableTreeNode temp = new DefaultMutableTreeNode(uc);
 		temp.setUserObject(uc);
 		Group gg;
@@ -239,7 +288,7 @@ public class adminGUI extends JFrame {
 		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
 		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree
 				.getLastSelectedPathComponent();
-		UserComponent uc = new Users(user.getText(), userC);
+		UserComponent uc = new Users(user.getText());
 		DefaultMutableTreeNode temp = new DefaultMutableTreeNode(uc);
 		temp.setAllowsChildren(false);
 		temp.setUserObject(uc);
